@@ -1,83 +1,156 @@
 # VITYARTHI_ARITIFICIAL-INTELLIGENCE-AND-MACHINE-LEARNING
-This project is designed for understanding of real-world ATM Systems work by applying core Python concepts. Component Description:  Python Main programming language datetime module Displays current date and time in balance summary Functions For modular code  such as functions, conditional statements, loops , file/module management.  
+# ATM-system
 
+PROJECT TITLE: ATM INTERFACE SYSTEM WITH ML-BASED FRAUD DETECTION
 
-ATM-system
-PROJECT TITLE: ATM INTERFACE SYSTEM  with ML-based Fraud Detection.
+OVERVIEW OF THE PROJECT:
+This project simulates a real-world ATM system using core Python concepts —
+functions, conditional statements, loops, and file/module management — and
+extends it with a Machine Learning component that flags unusual or
+potentially fraudulent transactions in real time.
 
-OVERVIEW OF THE PROJECT: This project is designed for understanding of real-world ATM Systems work by applying core Python concepts such as functions, conditional statements, loops , file/module management.
+Instead of relying only on fixed rules, the system learns what "normal"
+transaction behaviour looks like (typical amounts, typical times of day,
+typical amount-to-balance ratios) and uses an **Isolation Forest** model
+(unsupervised anomaly detection) to score every new transaction against
+that learned pattern.
 
-⭐ FEATURES :
+⭐ FEATURES:
 
-Secure Login System
-User must enter the correct PIN. Only 3 attempts allowed. After 3 failed attempts → Card is temporarily blocked.
+1. Secure Login System
+   - User must enter the correct PIN.
+   - Only 3 attempts allowed.
+   - After 3 failed attempts → Card is temporarily blocked.
 
-Check Account Balance
-Displays: Account Holder Name Account Number Available Balance Well-formatted summary screen
+2. Check Account Balance
+   - Displays Account Holder Name, Account Number, Available Balance.
+   - Well-formatted summary screen.
 
-Deposit Money
-User can deposit any valid (positive) amount. Updated balance displayed instantly.
+3. Deposit Money
+   - User can deposit any valid (positive) amount.
+   - Updated balance displayed instantly.
+   - Every deposit is scored by the ML fraud detection model.
 
-Withdraw Money
-User can withdraw only if there is sufficient balance. Validates negative or zero inputs.
+4. Withdraw Money
+   - User can withdraw only if there is sufficient balance.
+   - Validates negative or zero inputs.
+   - Every withdrawal is scored by the ML fraud detection model; unusual
+     withdrawals prompt a confirmation before completing.
 
-User-Friendly Menu
-Loop-based menu for continuous use until the user exits.
-ML component — an Isolation Forest anomaly-detection model that flags unusual transactions (e.g. a huge withdrawal at 3 AM, or an amount way out of line with the account's normal behavior).
+5. ML-Based Fraud/Anomaly Detection
+   - A trained Isolation Forest model flags transactions that look
+     statistically unusual for the account (very large amounts, odd
+     amount-to-balance ratios, etc).
+   - Flagged transactions are logged to `fraud_alerts.log`.
+   - A dedicated menu option lets you view all flagged alerts.
+
+6. User-Friendly Menu
+   - Loop-based menu for continuous use until the user exits.
 
 TECHNOLOGIES USED:
 
-Component Description:
+| Component        | Description                                              |
+|-------------------|-----------------------------------------------------------|
+| Python            | Main programming language                                 |
+| datetime module   | Displays current date/time; used as an ML feature          |
+| scikit-learn      | Isolation Forest model for fraud/anomaly detection          |
+| pandas / numpy    | Data generation and feature preparation for the ML model    |
+| joblib            | Saving/loading the trained ML model                          |
+| Functions         | Modular code (login, deposit, withdraw, check balance, fraud check) |
 
-Python Main programming language
-datetime module Displays current date and time in balance summary
-Functions For modular code (login, deposit, withdraw, check balance)
-Steps to Install and Run the Project
+## How the ML Model Works
 
-Install Python
-Make sure Python is installed. Download from: https://www.python.org/downloads/
+1. `train_model.py` generates a synthetic dataset of ATM transactions —
+   mostly "normal" transactions (moderate amounts, daytime hours) with a
+   small percentage of injected anomalies (very large amounts, odd hours,
+   high withdrawal-to-balance ratios).
+2. Five features are extracted per transaction: `amount`, `hour`,
+   `dayofweek`, `balance_before`, and `amount_to_balance_ratio`.
+3. Features are scaled with `StandardScaler`, then an `IsolationForest`
+   model (contamination = 5%) is trained to separate normal transactions
+   from outliers.
+4. The trained model (`fraud_model.pkl`) and scaler (`scaler.pkl`) are saved
+   to disk and loaded by `fraud_detector.py` to score every new transaction
+   live inside `deposit_money.py` and `withdraw_money.py`.
 
-Create a Project Folder
+## Project Structure
 
-Create a Python File
+2. Five features are extracted per transaction: `amount`, `hour`,
+   `dayofweek`, `balance_before`, and `amount_to_balance_ratio`.
+3. Features are scaled with `StandardScaler`, then an `IsolationForest`
+   model (contamination = 5%) is trained to separate normal transactions
+   from outliers.
+4. The trained model (`fraud_model.pkl`) and scaler (`scaler.pkl`) are saved
+   to disk and loaded by `fraud_detector.py` to score every new transaction
+   live inside `deposit_money.py` and `withdraw_money.py`.
 
-Inside the folder, create a file
+## Project Structure
 
-Copy the Code
-Paste the full ATM code into the folder.
+ATM-system/
+├── main.py # Main menu and program entry point
+├── login_page.py # Secure PIN-based login
+├── account.py # Shared in-memory account data
+├── deposit_money.py # Deposit logic + ML fraud check
+├── withdraw_money.py # Withdrawal logic + ML fraud check
+├── Balance_page.py # Balance summary screen
+├── fraud_detector.py # ML fraud/anomaly detection module
+├── train_model.py # Trains and saves the Isolation Forest model
+├── requirements.txt # Python dependencies
+├── fraud_model.pkl # Trained model (generated by train_model.py)
+├── scaler.pkl # Feature scaler (generated by train_model.py)
+├── transaction_history.csv # Synthetic training data (generated)
+├── fraud_alerts.log # Log of flagged/suspicious transactions
+├── statement.md
+├── PROJECT python.pdf
+└── OUTPUT SCREENSHOT.pdf
 
-Run the Program
-Open a terminal or command prompt
 
+
+## Steps to Install and Run the Project
+
+1. Install Python
+   Make sure Python is installed. Download from: https://www.python.org/downloads/
+
+2. Clone or download this repository.
+
+3. Install dependencies:
+## pip install -r requirements.txt
+
+4. Train the fraud detection model (run once):
+
+   
 The ATM menu will appear on screen.
 
-Instructions for Testing the Project
+## Instructions for Testing the Project
 
-Test Login System
-Enter wrong PIN → attempts decrease
+1. Test Login System
+   - Enter wrong PIN → attempts decrease.
+   - After 3 attempts → card blocked.
+   - Enter correct PIN → login successful.
 
-After 3 attempts → card blocked
+2. Test Deposit Function
+   - Deposit a normal amount (e.g. ₹1,500) → balance updates normally.
+   - Deposit an unusually large amount (e.g. ₹50,000) → flagged by the ML
+     model and logged to `fraud_alerts.log`.
+   - Zero or negative → error message.
 
-Enter correct PIN → login successful
+3. Test Withdrawal Function
+   - Withdraw amount less than balance → success.
+   - Withdraw more than balance → "Insufficient balance".
+   - Withdraw zero/negative → invalid message.
+   - Withdraw an unusually large amount relative to balance → flagged by
+     the ML model, with a confirmation prompt before completing.
 
-Test Deposit Function
-Try depositing:
+4. Test Check Balance
+   - Should show the updated balance.
 
-Positive amount → balance updates
+5. Test Fraud Alerts View
+   - Choose option "5" to see all flagged transactions logged so far.
 
-Zero or negative → error message
+6. Test Exit
+   - Choose option "6" to quit the program.
 
-Test Withdrawal Function
-Withdraw amount less than balance → success
-
-Withdraw more than balance → “Insufficient balance”
-
-Withdraw zero/negative → invalid message
-
-Test Check Balance
-Should show:
-
-Updated balance
-
-Test Exit
-Choose option “5” to quit the program.
+## Possible Extensions
+- Replace the synthetic training dataset with real (anonymised) transaction data.
+- Add a supervised model (e.g. Random Forest) if labelled fraud data becomes available.
+- Persist account data to a file/database instead of in-memory storage.
