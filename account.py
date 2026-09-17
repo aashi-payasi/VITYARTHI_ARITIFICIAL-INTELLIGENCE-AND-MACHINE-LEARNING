@@ -1,16 +1,12 @@
-#account.py 
+#account.py
 # Shared account data
-
 account = {
-    
-    "pin" : "1234",
-    "balance" : 3000.0
-
+    "pin": "1234",
+    "balance": 3000.0
 }
 
-
 def get_pin():
-    return "pin"
+    return account["pin"]
 
 def get_balance():
-    return float("balance")
+    return float(account["balance"])
