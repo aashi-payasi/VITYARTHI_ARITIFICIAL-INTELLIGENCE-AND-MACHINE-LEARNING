@@ -3,7 +3,7 @@ This project is designed for understanding of real-world ATM Systems work by app
 
 
 ATM-system
-PROJECT TITLE: ATM INTERFACE SYSTEM
+PROJECT TITLE: ATM INTERFACE SYSTEM  with ML-based Fraud Detection.
 
 OVERVIEW OF THE PROJECT: This project is designed for understanding of real-world ATM Systems work by applying core Python concepts such as functions, conditional statements, loops , file/module management.
 
@@ -23,6 +23,7 @@ User can withdraw only if there is sufficient balance. Validates negative or zer
 
 User-Friendly Menu
 Loop-based menu for continuous use until the user exits.
+ML component — an Isolation Forest anomaly-detection model that flags unusual transactions (e.g. a huge withdrawal at 3 AM, or an amount way out of line with the account's normal behavior).
 
 TECHNOLOGIES USED:
 
